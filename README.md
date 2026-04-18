@@ -17,7 +17,7 @@ Loyiha ustozingiz yoki boshqa dasturchi tomonidan ishga tushirilishi uchun quyid
 
 1. **Loyihani yuklab olish**:
    ```bash
-   git clone [repository-link]
+      git clone https://github.com/ZubairWalker/Smart-attandance.git
    cd smart-attendance
    ```
 
