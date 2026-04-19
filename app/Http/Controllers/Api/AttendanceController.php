@@ -7,8 +7,36 @@ use App\Models\Attendance;
 use App\Models\QrToken;
 use Illuminate\Http\Request;
 
+use OpenApi\Attributes as OA;
+
 class AttendanceController extends Controller
 {
+    #[OA\Post(
+        path: "/api/attendance/check-in",
+        summary: "User Check-in",
+        description: "Record a user's check-in using a valid QR token.",
+        tags: ["Attendance"],
+        security: [["bearerAuth" => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["token"],
+                properties: [
+                    new OA\Property(property: "token", type: "string", example: "ABC123XYZ789")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Check-in successful"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "Validation Error or Business Logic Violation"
+            )
+        ]
+    )]
     public function checkIn(Request $request)
     {
         $user = auth('api')->user();
@@ -53,6 +81,23 @@ class AttendanceController extends Controller
         return response()->json(['message' => 'Check-in successful', 'data' => $attendance]);
     }
 
+    #[OA\Post(
+        path: "/api/attendance/check-out",
+        summary: "User Check-out",
+        description: "Record a user's check-out for the current day.",
+        tags: ["Attendance"],
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Check-out successful"
+            ),
+            new OA\Response(
+                response: 422,
+                description: "No active check-in found"
+            )
+        ]
+    )]
     public function checkOut(Request $request)
     {
         $user = auth('api')->user();
@@ -73,6 +118,40 @@ class AttendanceController extends Controller
         return response()->json(['message' => 'Check-out successful', 'data' => $attendance]);
     }
 
+    #[OA\Get(
+        path: "/api/attendance/month",
+        summary: "Monthly Attendance Report",
+        description: "Get the current user's attendance records for a specific month.",
+        tags: ["Attendance"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "month",
+                in: "query",
+                description: "Month (1-12)",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 4)
+            ),
+            new OA\Parameter(
+                name: "year",
+                in: "query",
+                description: "Year",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 2026)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "List of attendance records",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "data", type: "array", items: new OA\Items(type: "object"))
+                    ]
+                )
+            )
+        ]
+    )]
     public function monthlyReport(Request $request)
     {
         $user = auth('api')->user();
