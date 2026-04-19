@@ -17,4 +17,12 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+try {
+    $app->handleRequest(Request::capture());
+} catch (\Throwable $e) {
+    if (headers_sent()) {
+        file_put_contents('php://stderr', "\n\n----- FATAL ERROR AFTER HEADERS SENT -----\n" . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n-----------------------------------------\n\n");
+    } else {
+        throw $e;
+    }
+}
