@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(title: "Smart Attendance API", version: "1.0.0", description: "API for managing smart attendance with QR code generation and JWT authentication.")]
-#[OA\Server(url: "http://localhost:8000", description: "Local Development Server")]
+#[OA\Server(url: L5_SWAGGER_CONST_HOST, description: "API Server")]
 #[OA\SecurityScheme(securityScheme: "bearerAuth", type: "http", scheme: "bearer", bearerFormat: "JWT")]
 class AuthController extends Controller
 {

@@ -35,9 +35,15 @@
     },
     "scripts": {
         "setup": [
-            "composer install",
+            "composer install --no-interaction --prefer-dist --optimize-autoloader",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
+            "@php artisan key:generate --force",
+            "@php -r \"if (!is_dir('storage/framework/sessions')) mkdir('storage/framework/sessions', 0755, true);\"",
+            "@php -r \"if (!is_dir('storage/framework/views')) mkdir('storage/framework/views', 0755, true);\"",
+            "@php -r \"if (!is_dir('storage/framework/cache/data')) mkdir('storage/framework/cache/data', 0755, true);\"",
+            "@php -r \"if (!is_dir('storage/logs')) mkdir('storage/logs', 0755, true);\"",
+            "@php artisan config:cache",
+            "@php artisan route:cache",
             "@php artisan migrate --force",
             "npm install --ignore-scripts",
             "npm run build"
